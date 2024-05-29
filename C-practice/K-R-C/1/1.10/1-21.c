@@ -20,7 +20,7 @@ int main()
 
     while((len = gotline(line, MAXLINE)) > 0)
     {
-        detab(line, holder);
+        entab(line, holder);
         printf("%s", holder);
     }
     return 0;
@@ -45,20 +45,32 @@ void entab(char in[], char out[])
 {
     int i,j,spaces,tabs;
 
-    spaces = 0;
     for (i = j = 0; in[i] != '\0'; ++i)
     {
         if (in[i] == ' ')
         {
-            while (in[i] == ' ')
-            {
-                spaces++;
-                i++;
+            for (spaces = tabs = 0; in[i] == ' '; ++i) {
+                if ((i + 1) % TAB_STOP == 0)
+                {
+                    ++tabs;
+                    spaces = 0;
+                } else 
+                {
+                    ++spaces;
+                }
             }
-            tabs = (spaces / TAB_STOP);
-            spaces = (spaces % TAB_STOP);
-        } else
+            --i;   
+            while (tabs-- > 0)
+            {
+                out[j++] = '\t';
+            }
+            while (spaces-- > 0)
+            {
+                out[j++] = ' ';
+            }
+        } else {
             out[j++] = in[i];
+        }
     }
     out[j] = '\0';
 }
