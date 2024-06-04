@@ -27,24 +27,27 @@ int main()
 
 void fold(char in[], char out[])
 {
-    int i, j, last_space;
-    i = j = last_space = 0;
+    int i, last_space;
+    i = last_space = 0;
 
-    for (j = i = 0; in[i] != '\0'; ++i)
+    for (i = 0; in[i] != '\0'; ++i)
     {
         if ((in[i] == ' ') || (in[i] == '\t'))
         {
-            last_space = j;
+            last_space = i;
         }
-        if ((j > 0) && (j % COL_SIZE) == 0)
+
+        out[i] = in[i];
+        
+        if (((i % COL_SIZE) <= 0) && (in[i] == ' '))
         {
-            j += 2;
+            out[i] = '\n';
+        } else if ((i > 0) && ((i % COL_SIZE) <= 0))
             out[last_space] = '\n';
-        } else {
-            out[j++] = in[i];
-        }
+        
+        printf("%d %c, %d %c\n", i, in[i], i, out[i]);
     }
-    out[j] = '\0';
+    out[i] = '\0';
 }
 
 int gotline(char s[], int len)
