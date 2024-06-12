@@ -3,6 +3,7 @@
 #define ON 1
 #define OFF 0
 int start = OFF;
+int quote = OFF;
 /*
 
 Write a program that removes all comments from a C program. 
@@ -34,18 +35,23 @@ void remove_comments(char in[], char out[])
     for (i = 0; in[i] != '\0'; ++i)
     {
         //printf("Hello");
-        if ((in[i] == '/') && ((in[i + 1] == '/') || (in[i + 1] == '*')))
+        if ((in[i] == '/') && (in[i + 1] == '*'))
         {
-            if (start == OFF)
+            if (start == OFF && quote == OFF)
                 start = ON;
         }
 
         if ((in[i] == '*') && (in[i + 1] == '/'))
         {
-            if (start == ON)
+            if (start == ON && quote == OFF)
                 i += 2;
                 start = OFF;
         }
+
+        if (start == OFF && (in[i] == '\"') && (quote == OFF))
+            quote = ON;
+        else if (start == OFF && (in[i] == '\"') && (quote == ON))
+            quote = OFF;
 
         if (start == OFF || in[i] == '\n')
         {
