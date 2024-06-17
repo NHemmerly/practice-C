@@ -43,6 +43,8 @@ int main(){
         if (symbols[i] > 0)
         {
             printf("%c = %d unclosed instances\n", dictionary[i], symbols[i]);
+        } else if (symbols[i] < 0) {
+            printf("%c = %d unopened instances\n", dictionary[i], symbols[i] * -1);
         }
     }
 
