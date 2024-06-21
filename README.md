@@ -9,4 +9,4 @@ In the K-R-C directory I include sub directories per chapter of the book. Source
 ## Kattis
 [Kattis](https://open.kattis.com/) is a competitive programming website similar to Leetcode and CodeWars. 
 The Kattis directory contains source files for all of the Kattis problems I have completed. Names in the Kattis directory 
-are named similarly to the actual kattis problems, just with English-keyboard-friendly characters.
+are named similarly to the actual Kattis problems, just with English-keyboard-friendly characters.
