@@ -27,20 +27,17 @@ void copy(char in[], char out[])
 int gotline(char s[], int len)
 {
     int c, i;
-/*
+
     for (i = 0; i < len-1; ++i)
     {
-        if ((c=getchar()) != '\n')
-        {
-            if (c != EOF)
-            {
-                s[i] = c;
-            }
-        }
-    }
-*/
-    for (i=0; i < len-1 && (c=getchar())!=EOF && c!='\n'; ++i)
+        if ((c=getchar()) == '\n')
+            break;
+        if (c == EOF)
+            break;
+            
         s[i] = c;
+        
+    }
     if (c == '\n')
     {
         s[i] = c;
