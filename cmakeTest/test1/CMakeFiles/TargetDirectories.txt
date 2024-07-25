@@ -1,3 +1,0 @@
-/home/neilh/repos/practice-C/cmakeTest/test1/CMakeFiles/test1.dir
-/home/neilh/repos/practice-C/cmakeTest/test1/CMakeFiles/edit_cache.dir
-/home/neilh/repos/practice-C/cmakeTest/test1/CMakeFiles/rebuild_cache.dir
