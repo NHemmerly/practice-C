@@ -1,4 +1,5 @@
 #include <iostream>
+#include <vector>
 
 const std::string& getHexString(std::string& hex)
 {
@@ -7,9 +8,22 @@ const std::string& getHexString(std::string& hex)
     return hex;
 }
 
-const int decToBin(int dec)
+void decToBin(int dec)
 {
+    std::vector<int> byte {9};
+
+    for (int i = 7; i >= 0 ; --i)
+    {
+        byte[i] = dec % 2;
+        dec /= 2;
+    }
     
+    for (int i = 0; i < 8; ++i)
+    {
+        std::cout << byte[i];
+    }
+    std::cout << std::endl;
+
 }
 
 int main()
@@ -21,4 +35,5 @@ int main()
 
     int hexInt = std::stoi(hexString, 0, 16);
     std::cout << hexInt << std::endl;
+    decToBin(hexInt);
 }
