@@ -9,8 +9,7 @@ namespace Wordlist
                                                  "almost", "spaghetti", "opinion",
                                                   "beautiful", "distance", "luggage"};
 
-    const std::string_view randomWord()
-    {
+    const std::string_view randomWord(){
         const int randIndex {Random::get(0, Wordlist::words.size() - 1)};
         return Wordlist::words[randIndex];
     }
@@ -18,55 +17,78 @@ namespace Wordlist
 
 class Session {
     public:
+        Session(const int guesses) 
+            : m_letters(26) 
+            , m_guesses(guesses)
+        {}
         std::string_view getWord() const {return m_randWord;}
-        void pushLetter(const char letter) {letters.push_back(letter);}
-        const std::vector<char>& getLetters() const {return letters;}
-
+        const int getGuesses() const {return m_guesses;}
+        void pushLetter(const char letter) {m_letters[letter - 'a'] = true;}
+        const std::vector<bool>& getLetters() const {return m_letters;}
+        bool checkWin() {
+            for (const auto& letter : m_randWord)
+            {
+                if (m_letters[letter - 'a'] == false){
+                    return false;
+                }
+            }
+            return true;
+        }
+        void subtractGuesses(const char in) {
+            m_wrongs += in;
+            m_guesses--;
+        }
+        void displayGuesses() const{
+            std::cout << " Wrong guesses: ";
+            for (size_t i {0}; i < m_guesses; ++i){
+                std::cout << "+";
+            }
+            std::cout << m_wrongs;  
+        }
+        bool checkInput(const char in)
+        {
+            for (const char letter : m_randWord){
+                if (in == letter){
+                    return true;
+                }
+            }
+            return false;
+        }
     private:
         const std::string_view m_randWord {Wordlist::randomWord()};
-        std::vector<char> letters {};
+        std::vector<bool> m_letters;
+        std::string m_wrongs {};
+        int m_guesses{};
+        bool m_won = false;
 };
 
-void displayWord(const Session& game)
+void displayWord(Session& game)
 {
     std::cout << "The word: ";
     for (size_t i {0}; i < game.getWord().size(); ++i){
-        char output = '_';
-        for (const char letter : game.getLetters()){
-            if (game.getWord()[i] == letter){
-                output = letter;
-            }
-        }
-        std::cout << output;
-    }
-    std::cout << std::endl;
-}
-
-void startGame(const std::string_view word)
-{
-    std::cout << "The word: ";
-    for (size_t i {0}; i < word.size(); ++i)
-    {
+        if (game.getLetters()[game.getWord()[i] - 'a']){
+            std::cout << game.getWord()[i];
+            continue;
+        } 
         std::cout << "_";
     }
+    game.displayGuesses();
     std::cout << std::endl;
 }
 
-const char getInput(const std::vector<char>& letters)
+const char getInput(const std::vector<bool>& letters)
 {
     char input {};
     while (true){
         std::cout << "Enter a lowercase letter: ";
         std::cin >> input;
-        for (const char letter : letters)
+        
+        if (letters[input - 'a'])
         {
-            if (input == letter)
-            {
-                std::cin.clear();
-                std::cout << "letter already guessed, try again." << std::endl;
-                std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-                continue;
-            }
+            std::cin.clear();
+            std::cout << "letter already guessed, try again." << std::endl;
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+            continue;
         }
         if (input < 'a' || input > 'z'){
             std::cin.clear();
@@ -79,6 +101,7 @@ const char getInput(const std::vector<char>& letters)
             std::cin.clear();
             std::cout << "Invalid input, try again." << std::endl;
             std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+            continue;
         }
         break;
     }
@@ -86,16 +109,66 @@ const char getInput(const std::vector<char>& letters)
     return input;
 }
 
-void gameLoop()
+bool tryParse(std::string& input, int& output)
 {
-    Session start;
-    startGame(start.getWord());
-    for (size_t i {0}; i < 6; ++i)
-    {
-        start.pushLetter(getInput(start.getLetters()));
-        displayWord(start);
+    try{
+        output = std::stoi(input);
+    } catch (std::invalid_argument) {
+        return false;
     }
+    if (output > 3 || output < 1)
+    {
+        return false;
+    }
+    return true;
+}
 
+const int selectDifficulty()
+{
+    std::cout << "Please select a difficulty: \n" <<
+                "1. Easy\n" <<
+                "2. Medium\n" <<
+                "3. Hard" << std::endl;
+    std::string input;
+    int out {};
+
+    getline(std::cin, input);
+    while (!tryParse(input, out)) {
+        std::cout << "Invalid entry! Please enter a value between 1 and 3: ";
+        getline(std::cin, input);
+    }
+    switch (out)
+    {
+        case 1: return 9;
+        case 2: return 7;
+        case 3: return 5;
+        default: return 9;
+    }
+}
+
+void gameLoop(){
+    Session start (selectDifficulty());
+    while (start.getGuesses() > 0)
+    {
+        if (start.checkWin())
+        {
+            std::cout << "You win! The word was: " << start.getWord() << std::endl;
+            break;
+        }
+        displayWord(start);
+        char in = getInput(start.getLetters());
+        start.pushLetter(in);
+        if(!(start.checkInput(in))){
+            std::cout << "'" << in << "'" << " is incorrect!\n" << std::endl;
+            start.subtractGuesses(in);
+        } else {
+            std::cout << "'" << in << "'" << " is correct!\n" << std::endl;
+        }
+    }
+    if (!(start.checkWin()))
+    {
+        std::cout << "Sorry! You lose. The word was: " << start.getWord() << std::endl;
+    }
 }
 
 int main()
