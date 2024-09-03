@@ -169,8 +169,7 @@ void gameLoop(){
         displayWord(start);
         handleTurn(start);
     }
-    if (!(start.checkWin()))
-    {
+    if (!(start.checkWin())){
         std::cout << "Sorry! You lose. The word was: " << start.getWord() << std::endl;
     }
 }
